@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raqam Kiritish Cheklovi</title>
+    <style>
+        /* Input elementining spin tugmalarini yashirish */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Foydalanuvchi interfeysi uchun ba'zi qo'shimcha uslublar */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label for="numberInput">Son kiriting (0 dan 50 gacha):</label>
+        <input type="number" id="numberInput" name="numberInput" min="0" max="50" oninput="checkValue()">
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        function checkValue() {
+            var input = document.getElementById('numberInput');
+            var message = document.getElementById('message');
+            if (input.value > 50) {
+                input.value = 50;
+                message.textContent = 'Qiymat 50 dan oshmasligi kerak';
+            } else {
+                message.textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>

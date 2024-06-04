@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Kategoriya: {{cont}} {% endblock %}
+{% block content %}
+
+<style>
+    .product_quantity label {
+        position: absolute;
+        top: 50%;
+        left: 23px;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%);
+        font-size: 16px;
+        font-weight: 600;
+        color: #6c6a74;
+    }
+
+    .button span {
+        display: block;
+        position: relative;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 57px;
+        color: #1b1b1b;
+        background: none;
+        z-index: 1;
+        -webkit-transition: all 200ms ease;
+        -moz-transition: all 200ms ease;
+        -ms-transition: all 200ms ease;
+        -o-transition: all 200ms ease;
+        transition: all 200ms ease;
+    }
+
+    .button:hover span {
+        color: #FFFFFF;
+    }
+
+    button:active {
+        border: 0px;
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="{% static 'styles/product.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles//product_responsive.css' %}">
+
+{% if request.user.is_authenticated %}
+{% if prodct == 'False' %}
+<div class="home_slider_container">
+    <p align="center" style="color: black;"><b>Siz qidirgan maxsulot mavjud emas</b></p>
+</div>
+{% else %}
+{% for i in prodct %}
+<div style="height: 100%;" class="home">
+    <div class="product_details">
+        <div class="container">
+            <div class="row details_row">
+
+                <div class="col-lg-5">
+                    <div class="details_image">
+                        <div class="details_image_large"><img src="/media/{{i.rasm}}" alt>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="details_content">
+                        <div class="details_name">{{i.name}}</div>
+                        <div class="in_stock_container">
+                            <div class="availability">Maxsulotdan</div><span>{{i.soni}}</span>
+                            <div class="availability">ta qoldi</div>
+                        </div>
+
+                        <div class="details_text">
+                            {% for i in mr %}
+                            <li>{{i}}</li>
+                            {% endfor %}
+                        </div>
+                        <div id="plus_price" class="details_price">1 x -{{i.narx}} so'm</div>
+
+                        {% if i.soni > 0 == True %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="product_quantity_container">
+                                <div class="product_quantity clearfix">
+                                    <label for="quantity_input">Soni</label>
+                                    <input style="width: 50px;" id="quantity_input" type="text" pattern="[0-9]*" value="1"
+                                         oninput="checkValue(event)" name="soni" required>
+                                         {% comment %} <div class="quantity_buttons">
+                                            <div id="quantity_inc_button" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>
+                                            <div id="quantity_dec_button" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>
+                                            </div> {% endcomment %}
+                                </div>
+                                {% comment %} <a href="/plus/{{cont}}/{{id}}"> {% endcomment %}
+                                    <button style="border: none; background-color: white;">
+                                        <div class="button cart_button"><span>Savatga qo'shish</span></div>
+                                    </button>
+                                {% comment %} </a> {% endcomment %}
+                            </div>
+                        </form>
+                        <div id="messagesx" class="details_price"></div>
+                        {% else %}
+                        <div style="right: 20px; bottom: 20px;" class="product_quantity_container">
+                            <div class="button cart_button"><span>Maxsulot tugadi.</span></div>
+                        </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function multiplyNumber() {
+        var input = document.getElementById("quantity_input").value;
+        var number = parseFloat(input);
+
+        if (isNaN(number)) {
+            document.getElementById("plus_price").innerText = "Iltimos, son kiriting!";
+            return;
+        }
+
+        var result = number * 657;
+        document.getElementById("plus_price").innerText = "Natija: " + result;
+    }
+
+    
+
+    function checkValue(event) {
+
+        var input = event.target.value;
+        var parsedInput = parseInt(input);
+        
+        if (isNaN(parsedInput)) {
+          event.target.value = "";
+        } else {
+          event.target.value = parsedInput;
+        }
+
+        
+        var input = document.getElementById('quantity_input');
+        var message = document.getElementById('messagesx');
+
+        if (input.value > Number("{{i.soni}}")) {
+            input.value = Number("{{i.soni}}");
+            message.textContent = 'Maxsulot chegarasiga yetdi';
+        } else {
+            message.textContent = '';
+        }
+
+        var input2 = document.getElementById('quantity_input').value;
+        var number = parseFloat(input2);
+
+        var result = number * Number("{{i.narx}}");
+        if (input.value === "" || input.value === "0"){
+            document.getElementById("plus_price").innerText = 1 + ' x -' + "{{i.narx}}" + " so'm";
+        }else{
+            document.getElementById("plus_price").innerText = number + ' x -' + result + " so'm";
+        }
+
+        if (input.value.startsWith("0") == true){
+            input.value = "1";
+        }
+    }
+
+    function isNumberKey(evt) {
+        var charCode = evt.which ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+    document.getElementById('quantity_input').onkeypress = isNumberKey;
+</script>
+
+
+{% endfor %}
+{% endif %}
+
+{% else %}
+<div class="home_slider_container">
+    <p align="center" style="color: black;"><b>Maxsulot haqida ma'lumotlarni ko'rish uchun hisobingizga kiring yoki
+            ro'yhatdan o'ting.</b></p>
+</div>
+{% endif %}
+
+{% endblock %}
